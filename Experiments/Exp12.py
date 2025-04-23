@@ -4,43 +4,29 @@ root = tk.Tk()
 root.title("Area Calculator")
 
 shapes = ["Circle", "Triangle", "Rectangle"]
+inputs = [("Radius",1), ("Base, Height",2), ("Length, Width",2)]
 entries = {}
-labels = [
-    ("Radius for Circle", 1),
-    ("Base and Height for Triangle", 2),
-    ("Length and Breadth for Rectangle", 2)
-]
 
 tk.Label(root, text="Calculate Area").pack()
 
-for text, count in labels:
-    tk.Label(root, text=text).pack()
-    entries[text] = [tk.Entry(root) for _ in range(count)]
-    for entry in entries[text]:
-        entry.pack()
+for t,n in inputs:
+    tk.Label(root, text=t).pack()
+    entries[t] = [tk.Entry(root) for _ in range(n)]
+    for e in entries[t]: e.pack()
 
-var = tk.StringVar(value="Circle")
-label4 = tk.Label(root, text="OUTPUT")
-label4.pack()
+var = tk.StringVar(value=shapes[0])
+out = tk.Label(root); out.pack()
 
-for shape in shapes:
-    tk.Radiobutton(root, text=shape, variable=var, value=shape,
-                  command=lambda: label4.config(text=f"Selected: {var.get()}")).pack()
+for s in shapes:
+    tk.Radiobutton(root, text=s, variable=var, value=s,
+                  command=lambda: out.config(text=f"Selected: {var.get()}")).pack()
 
-def calculate():
-    choice = var.get()
-    try:
-        if choice == "Circle":
-            r = float(entries[labels[0][0]][0].get())
-            label4.config(text=f"Area of Circle: {3.14*r*r:.2f}")
-        elif choice == "Triangle":
-            b, h = [float(x.get()) for x in entries[labels[1][0]]]
-            label4.config(text=f"Area of Triangle: {0.5*b*h:.2f}")
-        elif choice == "Rectangle":
-            l, w = [float(x.get()) for x in entries[labels[2][0]]]
-            label4.config(text=f"Area of Rectangle: {l*w:.2f}")
-    except ValueError:
-        label4.config(text="Invalid input")
+tk.Button(root, text="Calculate", command=lambda: [
+    out.config(text={
+        "Circle": f"Area: {3.14*float(entries[inputs[0][0]][0].get())**2:.2f}",
+        "Triangle": f"Area: {0.5*float(entries[inputs[1][0]][0].get())*float(entries[inputs[1][0]][1].get()):.2f}",
+        "Rectangle": f"Area: {float(entries[inputs[2][0]][0].get())*float(entries[inputs[2][0]][1].get()):.2f}"
+    }.get(var.get(), "Invalid input"))
+]).pack()
 
-tk.Button(root, text="Calculate", command=calculate).pack()
 root.mainloop()
